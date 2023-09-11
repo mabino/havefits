@@ -2,10 +2,8 @@ import wx
 import os
 import requests
 import threading
-from wx import ID_EXIT, ID_ABOUT
 from urllib.parse import urlparse
 from requests.exceptions import RequestException
-
 
 def is_valid_url(url):
     """
@@ -55,7 +53,7 @@ class MyFrame(wx.Frame):
     '''
     def __init__(self, parent, title):
         super().__init__(parent, title=title, size=(600, 600))
-        self.Bind(wx.EVT_MENU, self.on_exit, id=ID_EXIT)
+        self.Bind(wx.EVT_MENU, self.on_exit, id=wx.ID_EXIT)
         self.in_progress_downloads, self.download_path = 0, None
         self.panel = wx.Panel(self)
         self.base_url_label, self.base_url_text = wx.StaticText(self.panel, label="Base URL"), wx.TextCtrl(self.panel)
@@ -127,9 +125,9 @@ class MyApp(wx.App):
         self.SetTopWindow(self.frame)
         menubar = wx.MenuBar()
         file_menu = wx.Menu()
-        file_menu.Append(ID_EXIT, "E&xit\tCtrl+Q", "Quit this application")
+        file_menu.Append(wx.ID_EXIT, "E&xit\tCtrl+Q", "Quit this application")
         file_menu.Append(wx.ID_EXIT, "&Exit\tAlt+F4", "Exit this application")
-        self.SetMacAboutMenuItemId(ID_ABOUT)
+        self.SetMacAboutMenuItemId(wx.ID_ABOUT)
         self.frame.SetMenuBar(menubar)
         self.frame.Raise()
         return True
