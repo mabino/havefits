@@ -9,7 +9,7 @@ from requests.exceptions import RequestException
 
 def is_valid_url(url):
     """
-    This function checks if a URL is valid by parsing it for a scheme (e.g., 'http', 'https') and a network location (e.g., 'www.example.com').
+    This function checks if a URL is valid by parsing it for a scheme (e.g., 'http', 'https') and a network location (e.g., 'www.example.com'). Return bool.
     """
     try:
         return all(urlparse(url)[0:2])
@@ -19,7 +19,7 @@ def is_valid_url(url):
 class DownloadThread(threading.Thread):
     def __init__(self, url, filename, save_path, parent):
         """
-        Initializes a DownloadThread object with the provided URL, filename, save path, and parent frame.  Use of threading.Thread allows the download to go on in the background.  We subclass threading.Thread because then we can define our own run method.
+        Initializes a DownloadThread object with the provided URL, filename, save path, and parent frame.  Use of threading.Thread object to allow the downloads to go on in the background.  Subclasses threading.Thread to define a custom run method.
         https://docs.python.org/3.8/library/threading.html#threading.Thread
         """
         super().__init__()
@@ -27,8 +27,8 @@ class DownloadThread(threading.Thread):
 
     def run(self):
         """
-        Called automatically when the thread is started; attempts to download the file from the URL, save it to the specified path, and updates the GUI with progress.
-        For each thread, try to get a URL response.  If not, we have an exception.  If it is 200, write the file to a nonexistent file name.  Otherwise, report a failure to the log.
+        According to the docs, called automatically when a thread is started; attempts to download the file from the URL, save it to the specified path, and, given the customization, updates the GUI with progress.
+        Run for each thread, triees to get a URL response.  If not, we have an exception.  If it is 200, writes the file to a nonexistent file name.  Otherwise, report a failure to the log (GUI).
         """
         try:
             response = requests.get(self.url, stream=True)
@@ -51,7 +51,7 @@ class DownloadThread(threading.Thread):
 
 class MyFrame(wx.Frame):
     '''
-    Subclass wx.Frame as MyFrame and customize the layout in __init__, add methods for selecting the downloads folder, initiating the download, and updating the log.
+    Subclass of wx.Frame as MyFrame and customize the layout in __init__, add methods for selecting the downloads folder, initiating the download, and updating the log.
     '''
     def __init__(self, parent, title):
         super().__init__(parent, title=title, size=(600, 600))
@@ -118,7 +118,7 @@ class MyFrame(wx.Frame):
 
 class MyApp(wx.App):
     '''
-    Subclass wx.App and try to do Mac-like things when instantiated as app.
+    Subclass of wx.App; try to do Mac-like things when instantiated as app.
     Need to add Windows-like behavior after testing.  Does Alt+F4 work?
     '''
     def OnInit(self):
