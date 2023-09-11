@@ -2,7 +2,7 @@ import wx
 import os
 import requests
 import threading
-from wx import ID_EXIT, MOD_CMD, ID_ABOUT
+from wx import ID_EXIT, ID_ABOUT
 from urllib.parse import urlparse
 from requests.exceptions import RequestException
 
@@ -19,7 +19,8 @@ def is_valid_url(url):
 class DownloadThread(threading.Thread):
     def __init__(self, url, filename, save_path, parent):
         """
-        Initializes a DownloadThread object with the provided URL, filename, save path, and parent frame.  Use of threading.Thread allows the download to go on in the background.
+        Initializes a DownloadThread object with the provided URL, filename, save path, and parent frame.  Use of threading.Thread allows the download to go on in the background.  We subclass threading.Thread because then we can define our own run method.
+        https://docs.python.org/3.8/library/threading.html#threading.Thread
         """
         super().__init__()
         self.url, self.filename, self.save_path, self.parent = url, filename, save_path, parent
@@ -27,6 +28,7 @@ class DownloadThread(threading.Thread):
     def run(self):
         """
         Called automatically when the thread is started; attempts to download the file from the URL, save it to the specified path, and updates the GUI with progress.
+        For each thread, try to get a URL response.  If not, we have an exception.  If it is 200, write the file to a nonexistent file name.  Otherwise, report a failure to the log.
         """
         try:
             response = requests.get(self.url, stream=True)
@@ -48,6 +50,9 @@ class DownloadThread(threading.Thread):
             wx.CallAfter(self.parent.update_status, f"Error: {str(e)}")
 
 class MyFrame(wx.Frame):
+    '''
+    Subclass wx.Frame as MyFrame and customize the layout in __init__, add methods for selecting the downloads folder, initiating the download, and updating the log.
+    '''
     def __init__(self, parent, title):
         super().__init__(parent, title=title, size=(600, 600))
         self.Bind(wx.EVT_MENU, self.on_exit, id=ID_EXIT)
@@ -112,6 +117,10 @@ class MyFrame(wx.Frame):
         self.status_text.SetValue(current_status + message + '\n' + f"{status_message}\n")
 
 class MyApp(wx.App):
+    '''
+    Subclass wx.App and try to do Mac-like things when instantiated as app.
+    Need to add Windows-like behavior after testing.  Does Alt+F4 work?
+    '''
     def OnInit(self):
         self.frame = MyFrame(None, "Have FITS")
         self.frame.Show(True)
