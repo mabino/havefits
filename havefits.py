@@ -5,6 +5,8 @@ import threading
 from urllib.parse import urlparse
 from requests.exceptions import RequestException
 
+BUFFER_SIZE = 1024
+
 def is_valid_url(url):
     """
     This function checks if a URL is valid by parsing it for a scheme (e.g., 'http', 'https') and a network location (e.g., 'www.example.com'). Return bool.
@@ -39,12 +41,12 @@ class DownloadThread(threading.Thread):
                     file_path = os.path.join(self.save_path, new_filename)
                     file_exists, count = os.path.exists(file_path), count + 1
                 with open(file_path, 'wb') as file:
-                    for chunk in response.iter_content(1024):
+                    for chunk in response.iter_content(BUFFER_SIZE):
                         file.write(chunk)
                 wx.CallAfter(self.parent.update_status, f"Downloaded: {self.filename}")
             else:
                 wx.CallAfter(self.parent.update_status, f"Failed to download: {self.filename}")
-        except Exception as e:
+        except RequestException as e:
             wx.CallAfter(self.parent.update_status, f"Error: {str(e)}")
 
 class MyFrame(wx.Frame):
